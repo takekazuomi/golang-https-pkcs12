@@ -1,6 +1,8 @@
 run: cert/server.pfx
 	go run main.go
 
+cert/server.pfx:
+	cd cert; make crt
 curl:
 	curl -v --cacert cert/ca.crt https://localhost:9081/
 

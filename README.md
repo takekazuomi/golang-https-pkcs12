@@ -10,3 +10,30 @@ goにpkcs12を扱う機能が付いたのは、[crypto/x509: reading certificate
 
 やれやれって言う感じのことが書いてあった。
 
+## Self-signed certificate
+
+俗にいう、オレオレ証明書を作成し、pkcs12(pfx)ファイルに収容する。ここでは、パスワードに空文字列を使っている。
+
+```sh
+cd cert
+make crt
+```
+
+## goで使う
+
+[main.go](./main.go) を見ると最小限のことをやっている。
+
+サーバーの起動
+
+```sh
+make run
+```
+
+別のターミナルで、接続確認する
+
+```sh
+make curl
+```
+
+~~これをやってて気がついたのだが、curl だと、証明書を'CN=*'で出して、SANにlocalhostを入れてもエラーになるらしい。これは後で見る。~~ ＜これは勘違い
+

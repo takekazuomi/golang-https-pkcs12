@@ -1,4 +1,5 @@
 SHELL=bash
+SUBJECT="/CN=*"
 
 help:           ## Show this help.
 	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
@@ -13,7 +14,7 @@ client.crt:	## Create Client certificate
 		-keyout client.key \
 		-out client.crt \
 		-days 3650 \
-		-subj "/CN=localhost"
+		-subj $(SUBJECT)
 
 ca.crt: 	## Create CA certificate
 	openssl req \
@@ -31,7 +32,7 @@ server.csr:	## Generate a server Certificate Signing Request
 		-nodes \
 		-keyout server.key \
 		-out server.csr \
-		-subj "/CN=localhost"
+		-subj $(SUBJECT)
 
 server.crt: 	## Create a server Certificate
 server.crt: ca.crt server.csr
