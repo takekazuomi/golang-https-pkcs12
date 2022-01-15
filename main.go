@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 
 	"golang.org/x/crypto/pkcs12"
 )
@@ -25,7 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// 公開鍵、秘密鍵と２つの証明書が入っているので、個別に切り出す
+	// 今回のpfxには、公開鍵、秘密鍵と２つの証明書が入っているので、個別に切り出す
 	// map のkeyには、それぞれのブロック名を使う
 	pems := map[string][]byte{}
 
@@ -41,15 +40,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// http.Server用に、tls.Configを作る。ここでは、単純化するために自己署名を入れるだけ
 	cfg := &tls.Config{Certificates: []tls.Certificate{cert}}
+
+	//
 	srv := &http.Server{
-		Addr:         ":9081",
-		Handler:      &handler{},
-		TLSConfig:    cfg,
-		ReadTimeout:  time.Minute,
-		WriteTimeout: time.Minute,
+		Addr:      ":9081",
+		Handler:   &handler{},
+		TLSConfig: cfg,
 	}
-	log.Fatal(srv.ListenAndServeTLS("", ""))
+	log.Fatal(srv.ListenAndServe())
 }
 
 type handler struct{}
