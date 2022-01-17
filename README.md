@@ -48,6 +48,14 @@ make run
 make curl
 ```
 
-## コメント
+## メモ
 
-- kv から、証明書をダウンローするするときは、パスワードなし（空文字）のpkcs12になる。
+- KeyVault から、証明書をダウンローするするときは、パスワードなし（空文字）のpkcs12になり、pkcs12がbase64 encode されて落ちてくる
+- Azure Go SDKの新しいやつを使ってる。[新しいやつ](https://github.com/Azure/azure-sdk-for-go#client-new-releases)は、[Azure SDK ガイドライン](https://azure.github.io/azure-sdk/golang_introduction.html)に沿っており、再試行、ロギング、トランスポートプロトコル、認証プロトコルなどで共通の機構が使われる。ただ、機能に別にstableとbetaが混在している。（と書いてある）
+  - しかし、[Azure SDK Releases Go](https://azure.github.io/azure-sdk/releases/latest/go.html)をみると、stableは１つも無い。（が、BlobはGAしたような気がする）
+  - `azure-sdk-for-go/services` の下が前のリリースというやつ。こっちも、リリースが続いてる[v61.2.0](https://github.com/Azure/azure-sdk-for-go/releases/tag/v61.2.0)
+  - 新しいやつのKeyVaultは、keysと、secretsしかない。[sdk/keyvault](https://github.com/Azure/azure-sdk-for-go/tree/main/sdk/keyvault)。ここは本来、[key, secret, certificate, storage](https://docs.microsoft.com/en-us/rest/api/keyvault/)の３つがあるはず。storageはオワコンだけど。certificateは、[こっち](https://github.com/Azure/azure-sdk-for-go/issues/16768)でやってるらしい。リリースは[大分先](https://github.com/Azure/azure-sdk-for-go/milestone/55)。
+- 秘密鍵入の証明書は、secretsに入り、secretsとしてダウンロードできる。ポータルでは見えないけど。
+- kv単体だと、CSRに署名できないらしいことに気がついたので、ここにメモ。
+  - <https://stackoverflow.com/questions/60694494/how-to-sign-csr-in-azure-key-vault-using-a-issuer-certificate>
+  - <https://docs.microsoft.com/en-us/archive/blogs/kv/get-started-with-azure-key-vault-certificates#create-a-certificate-manually-and-get-signed-by-a-ca>
