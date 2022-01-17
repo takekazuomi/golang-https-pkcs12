@@ -19,6 +19,19 @@ cd cert
 make crt
 ```
 
+## keyvaultにアップロードする
+
+ここからは、Azure を使うので、`az login --use-device-code --tenant` して置く。現在ログインしているサブスクリプションは、`az account list  -o table` で確認できる。
+
+`az keyvault certificate import` を使ってKeyVaultにアップロードする。`{}` 内を適当に変更する。
+
+```sh
+export KEYVAULT_NAME={your key vault name}
+export RG={your resource group name}
+
+make kv-import
+```
+
 ## goで使う
 
 [main.go](./main.go) を見ると最小限のことをやっている。
@@ -34,3 +47,7 @@ make run
 ```sh
 make curl
 ```
+
+## コメント
+
+- kv から、証明書をダウンローするするときは、パスワードなし（空文字）のpkcs12になる。

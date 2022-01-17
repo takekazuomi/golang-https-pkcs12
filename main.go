@@ -3,16 +3,27 @@ package main
 import (
 	"crypto/tls"
 	"encoding/pem"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"takekazuomi/golang-https-pkcs12/kv"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"golang.org/x/crypto/pkcs12"
 )
 
 func main() {
-	// 公開鍵、秘密鍵を含んだpkcs12形式のpfxファイルを読む
-	data, err := ioutil.ReadFile("cert/server.pfx")
+
+	kv.KeyVaultName = os.Getenv("KEYVAULT_NAME")
+
+	// AzureのTokenを取得
+	credential, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// 公開鍵、秘密鍵を含んだpkcs12形式のpfxファイルをkeyvault からダウンロード
+	data, err := kv.GetSecrets(credential, "server")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,7 +60,7 @@ func main() {
 		Handler:   &handler{},
 		TLSConfig: cfg,
 	}
-	log.Fatal(srv.ListenAndServe())
+	log.Fatal(srv.ListenAndServeTLS("", ""))
 }
 
 type handler struct{}
