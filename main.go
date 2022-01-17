@@ -49,7 +49,7 @@ func main() {
 		Handler:   &handler{},
 		TLSConfig: cfg,
 	}
-	log.Fatal(srv.ListenAndServe())
+	log.Fatal(srv.ListenAndServeTLS("", ""))
 }
 
 type handler struct{}
